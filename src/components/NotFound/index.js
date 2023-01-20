@@ -1,25 +1,29 @@
-import {Link} from 'react-router-dom'
 import './index.css'
 
-const NotFound = () => (
-  <div className="covid-error-view-container">
-    <div className="notfound-card">
+const NotFound = props => {
+  const goToHome = () => {
+    const {history} = props
+    history.replace('/')
+  }
+
+  return (
+    <div className="not-found-route">
       <img
-        src="https://res.cloudinary.com/dnv6kesmt/image/upload/v1636521130/mini-project/notfound_wxbwda.png"
+        src="https://res.cloudinary.com/dkxj0xjra/image/upload/v1672378644/Covid%20Dashboard/Not_found_pic_oinllg.png"
         alt="not-found-pic"
         className="not-found-image"
       />
-      <h1 className="notfound-heading">PAGE NOT FOUND</h1>
-      <p className="notfound-description">
+      <h1 className="not-found-heading">Page Not Found</h1>
+      <p className="not-found-description">
         we are sorry, the page you requested could not be found
+        <br />
+        Please go back to the homepage
       </p>
-      <Link to="/">
-        <button type="button" className="go-to-home-button">
-          Home
-        </button>
-      </Link>
+      <button type="button" className="not-found-button" onClick={goToHome}>
+        Home
+      </button>
     </div>
-  </div>
-)
+  )
+}
 
 export default NotFound

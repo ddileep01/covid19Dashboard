@@ -1,88 +1,89 @@
+/* eslint-disable react/no-unknown-property */
 import {Component} from 'react'
+
 import Loader from 'react-loader-spinner'
+
 import Header from '../Header'
-import FaqItem from '../FaqsList'
+
+import FaqItem from '../FaqItem'
+
 import Footer from '../Footer'
+
 import './index.css'
 
 const apiStatusConstants = {
   initial: 'INITIAL',
+  progress: 'IN_PROGRESS',
   success: 'SUCCESS',
-  inProgress: 'IN_PROGRESS',
 }
 
 class About extends Component {
-  state = {
-    faqsList: [],
-    apiStatus: apiStatusConstants.initial,
-  }
+  state = {apiStatus: apiStatusConstants.initial, faqList: []}
 
   componentDidMount() {
-    this.getCovid19Faqs()
+    this.getAboutContent()
   }
 
-  getCovid19Faqs = async () => {
-    this.setState({
-      apiStatus: apiStatusConstants.inProgress,
-    })
-    const faqUrl = 'https://apis.ccbp.in/covid19-faqs'
-    const options = {
-      method: 'GET',
-    }
-
-    const response = await fetch(faqUrl, options)
+  getAboutContent = async () => {
+    this.setState({apiStatus: apiStatusConstants.progress})
+    const url = 'https://apis.ccbp.in/covid19-faqs'
+    const response = await fetch(url)
     if (response.ok) {
       const fetchedData = await response.json()
-      this.setState({
-        faqsList: fetchedData.faq,
-        apiStatus: apiStatusConstants.success,
-      })
+      const {faq} = fetchedData
+      console.log(fetchedData)
+      this.setState({apiStatus: apiStatusConstants.success, faqList: faq})
     }
   }
 
-  renderCovidAbout = () => {
-    const {faqsList} = this.state
+  renderAboutRouteContent = () => {
+    const {faqList} = this.state
+    console.log('faq', faqList)
+
     return (
-      <div className="about-route-container">
-        <h1 className="about-heading">About</h1>
-        <p className="last-update">Last update on Monday, Nov 15th 2021.</p>
-        <p className="about-description">
-          COVID-19 vaccines be ready for distribution
-        </p>
-        <ul className="faq-list">
-          {faqsList.map(eachFaq => (
-            <FaqItem faqData={eachFaq} key={eachFaq.qno} />
-          ))}
-        </ul>
-        <Footer />
+      <div className="about-content-bg-container">
+        <div className="about-content-container">
+          <h1 className="about-heading">About</h1>
+          <p className="about-last-updated ">Last update on march 28th 2021.</p>
+          <p className="distribution-text">
+            COVID-19 vaccines be ready for distribution
+          </p>
+          <ul className="faq-list" testid="faqsUnorderedList">
+            {faqList.map(eachFaq => (
+              <FaqItem key={eachFaq.qno} faqItem={eachFaq} />
+            ))}
+          </ul>
+        </div>
       </div>
     )
   }
 
-  renderLoadingView = () => (
-    <div className="covid-loader-container">
-      <Loader type="Oval" color="#0b69ff" height="50" width="50" />
+  renderAboutRouteLoader = () => (
+    <div className="state-loader-container" testid="aboutRouteLoader">
+      <Loader type="TailSpin" color="#007BFF" width={50} height={50} />
     </div>
   )
 
-  renderCovidAboutData = () => {
+  renderApiStatusContent = () => {
     const {apiStatus} = this.state
+
     switch (apiStatus) {
       case apiStatusConstants.success:
-        return this.renderCovidAbout()
-      case apiStatusConstants.inProgress:
-        return this.renderLoadingView()
+        return this.renderAboutRouteContent()
       default:
-        return null
+        return this.renderAboutRouteLoader()
     }
   }
 
   render() {
     return (
-      <>
+      <div className="about-route">
         <Header />
-        {this.renderCovidAboutData()}
-      </>
+        {this.renderApiStatusContent()}
+        <div className="footer-container-1">
+          <Footer />
+        </div>
+      </div>
     )
   }
 }
